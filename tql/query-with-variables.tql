@@ -1,0 +1,9 @@
+query HeroNameAndFriends($hero_id: String!) {
+  hero_by_id(id: $hero_id): {
+    name: String!
+    friends: [{
+      name: String!
+    }]
+  }
+}
+
