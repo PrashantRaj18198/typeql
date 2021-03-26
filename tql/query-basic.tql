@@ -1,0 +1,9 @@
+query HeroNameAndFriends {
+  hero: {
+    name: String!
+    friends: [{
+      name: String!
+    }]
+  }
+}
+

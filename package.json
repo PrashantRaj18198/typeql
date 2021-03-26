@@ -1,0 +1,25 @@
+{
+  "name": "typeql",
+  "version": "0.0.0",
+  "description": "better way to add typings for graphql queries",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsc && node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PrashantRaj18198/typeql.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PrashantRaj18198/typeql/issues"
+  },
+  "homepage": "https://github.com/PrashantRaj18198/typeql#readme",
+  "devDependencies": {
+    "@types/node": "^14.14.36",
+    "tslint": "^5.12.1",
+    "typescript": "^4.2.3"
+  }
+}

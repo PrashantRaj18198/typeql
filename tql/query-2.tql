@@ -1,0 +1,3 @@
+query HeroName {
+  name: String!
+}

@@ -1,0 +1,9 @@
+query HeroNameAndFriends {
+  hero {
+    name 
+    friends {
+      name 
+    }
+  }
+}
+
