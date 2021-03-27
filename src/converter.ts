@@ -1,3 +1,4 @@
+import { settings } from "./settings";
 export interface IStringObject {
   [key: string]: string;
 }
@@ -7,15 +8,13 @@ const definations: IStringObject = {
   Int: "number",
 };
 
-const graphqlFolder = "./graphql/";
-const typingsFolder = "./typings";
 // const fileName = `query-with-variables`;
 const fs = require("fs").promises;
 /**
  * @todo provide typings for the query result in a .ts file
  * @todo provide typings for the variables in a .ts file
  */
-export async function tql(fileNameWithEnding: string): Promise<void> {
+export async function typeql(fileNameWithEnding: string): Promise<void> {
   // remove the .typeql from the fileName passed
   const fileName = fileNameWithEnding.split(".")[0];
   try {
@@ -77,9 +76,12 @@ export async function tql(fileNameWithEnding: string): Promise<void> {
     /**
      * write the query to a .graphql file with the same name
      */
-    await fs.writeFile(`${graphqlFolder}/${fileName}.graphql`, query);
+    await fs.writeFile(`${settings.graphqlDir}/${fileName}.graphql`, query);
     if (variableTyping) {
-      await fs.writeFile(`${typingsFolder}/${fileName}.ts`, variableTyping);
+      await fs.writeFile(
+        `${settings.typingsDir}/${fileName}.ts`,
+        variableTyping
+      );
     }
   } catch (error) {
     console.log(error);

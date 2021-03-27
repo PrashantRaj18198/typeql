@@ -1,27 +1,27 @@
-import { tql } from "./converter";
+import { typeql } from "./converter";
 import { promises as fs } from "fs";
-import path from "path";
-import process from "process";
+import { settings, pickSettingsFromTypeqlConfig } from "./settings";
 
-// const graphqlFolder = path.relative(process.cwd(), "./graphql/";
-const graphqlFolder = "./graphql";
-const typingsFolder = "./typings";
+console.log("settings data from index", settings);
 
 async function createFolders(): Promise<void> {
-  for (const folder of [graphqlFolder, typingsFolder]) {
+  console.log("inside createfolder", settings);
+  for (const folder of [settings.graphqlDir, settings.typingsDir]) {
+    // console.log(folder);
     if (!!!(await fs.stat(folder).catch((e: Error) => false))) {
-      await fs.mkdir(folder);
+      await fs.mkdir(folder).catch((e: Error) => console.log(e.message));
     }
   }
 }
 
 async function createGraphQLFilesForEachTypeQlFile(): Promise<void> {
+  await pickSettingsFromTypeqlConfig();
   // create graphql and typings folder if not exists
   await createFolders();
-  // read all files in tql folder
+  // read all files in typeql folder
   const folder = await fs.readdir("./typeql");
-  // for each tql file run the converter
-  folder.forEach((file) => file.endsWith(".typeql") && tql(file));
+  // for each typeql file run the converter
+  folder.forEach((file) => file.endsWith(".typeql") && typeql(file));
 }
 
 createGraphQLFilesForEachTypeQlFile();
