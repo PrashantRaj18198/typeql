@@ -1,6 +1,5 @@
 {
-  "graphqlDir": "graphql-new",
+  "graphqlDir": "graphql",
   "typeqlDir": "typeql",
-  "typingsDir": "typings",
-  "definations": {}
+  "typingsDir": "typings"
 }

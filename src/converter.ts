@@ -51,7 +51,8 @@ export async function typeql(fileNameWithEnding: string): Promise<void> {
     }
 
     /**
-     *
+     * if there is slicedQuery, i.e, variables are present then generate
+     * typings for the variables
      */
     if (slicedQuery !== "") {
       variableTyping = await generateVariableTyping(slicedQuery);
@@ -77,6 +78,9 @@ export async function typeql(fileNameWithEnding: string): Promise<void> {
      * write the query to a .graphql file with the same name
      */
     await fs.writeFile(`${settings.graphqlDir}/${fileName}.graphql`, query);
+    /**
+     * write the typings for variables only if variables are present
+     */
     if (variableTyping) {
       await fs.writeFile(
         `${settings.typingsDir}/${fileName}.ts`,
@@ -93,11 +97,22 @@ export async function typeql(fileNameWithEnding: string): Promise<void> {
 //   removeTill: number
 // ): string {}
 
+/**
+ * generate typings for the variables
+ * @returns an interface in string write to a tsfile and enjoy
+ */
 async function generateVariableTyping(slicedQuery: string) {
   const varaiblesStringArray: string[] = [];
   let start = 0,
     end = 0;
+  /**
+   * capture all the variables inside the first `(...)` block
+   */
   for (let index = 0; index < slicedQuery.length; index++) {
+    /**
+     * both the `(` and `)` were found, so the variables also found, therefore
+     * exiting the loop
+     */
     if (start !== 0 && end !== 0) {
       break;
     }
@@ -108,6 +123,7 @@ async function generateVariableTyping(slicedQuery: string) {
     } else if (start > 0) {
       /**
        * only add to array if the current character not in array
+       * if `$` is present ignore otherwise add
        */
       if (["$"].indexOf(slicedQuery[index]) === -1) {
         varaiblesStringArray.push(slicedQuery[index]);
@@ -115,31 +131,53 @@ async function generateVariableTyping(slicedQuery: string) {
     }
   }
   // console.log("variables string", slicedQuery.slice(start, end + 1));
+  /**
+   * join the char array to make string
+   * @example
+   * query Something($id1: String!, $id2: Int)
+   * this will turn to `id1: String!, id2: Int` after joining
+   */
   const variablesString = varaiblesStringArray.join("");
-  console.log("variables string", varaiblesStringArray.join(""));
+  // console.log("variables string", varaiblesStringArray.join(""));
+  /**
+   * split to get every variable.
+   * @example
+   * `id1: String!, id2: Int`  to `id1: String!`, `id2: Int`
+   */
   variablesString.split(",");
-  console.log(variablesString.split(","));
+  // console.log(variablesString.split(","));
   const resultVariablesTypeObject: IStringObject = {};
   // return variablesString;
   for (const variableLine of variablesString.split(",")) {
+    /**
+     * split and trim every variable
+     */
     const [variable, type] = variableLine
       .split(":")
       .map((variable) => variable.trim());
+    /**
+     * if last char is `!` then type is strict
+     */
     if (type[type.length - 1] === "!") {
       resultVariablesTypeObject[variable] =
         definations[type.slice(0, type.length - 1)];
     } else {
+      /** type is not strict so add null
+       */
       resultVariablesTypeObject[variable] =
-        (definations[type] as string) + " | undefined";
+        (definations[type] as string) + " | null";
     }
   }
   const stringifiedVariableType =
     "export interface IVariables " +
+    /**
+     * remove all the `"` from the Json string
+     */
     JSON.stringify(resultVariablesTypeObject, null, 4).replace(/\"/g, "");
-  console.log(
-    resultVariablesTypeObject,
-    JSON.stringify(resultVariablesTypeObject, null, 4)
-  );
-  console.log(stringifiedVariableType);
+  // console.log(
+  //   resultVariablesTypeObject,
+  //   JSON.stringify(resultVariablesTypeObject, null, 4)
+  // );
+  // console.log(stringifiedVariableType);
   return stringifiedVariableType;
 }
