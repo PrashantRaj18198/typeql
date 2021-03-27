@@ -17,7 +17,7 @@ query HeroNameAndFriends {
 After using typeQL. You get a schema which is more descriptive about the data
 that you are going to get from this query.
 
-```typeql
+```graphql
 query HeroNameAndFriends {
   hero: {
     name: String!
