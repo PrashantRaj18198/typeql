@@ -15,7 +15,7 @@ async function createGraphQLFilesForEachTypeQlFile(): Promise<void> {
   // read all files in tql folder
   const folder = await fs.readdir("./tql");
   // for each tql file run the converter
-  folder.forEach((file) => tql(file));
+  folder.forEach((file) => file.endsWith(".tql") && tql(file));
 }
 
 createGraphQLFilesForEachTypeQlFile();
