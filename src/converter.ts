@@ -18,7 +18,7 @@ export async function typeql(fileNameWithEnding: string): Promise<void> {
   // remove the .typeql from the fileName passed
   const fileName = fileNameWithEnding.split(".")[0];
   try {
-    console.log("running tql converter");
+    // console.log("running tql converter");
     // read data from tql file
     const data = await fs.readFile(`typeql/${fileName}.typeql`);
     // convert file data to utf-8 and a string
@@ -31,6 +31,9 @@ export async function typeql(fileNameWithEnding: string): Promise<void> {
      */
     let slicedQuery = "";
     let variableTyping: string | undefined = undefined;
+    let resultTyping: string | undefined = undefined;
+
+    resultTyping = await generateResultTyping(query);
     /**
      * parantheses matcher. Matches everything till the last `)` character found
      * Since we only support one query per file this should be okay to do.
@@ -43,6 +46,7 @@ export async function typeql(fileNameWithEnding: string): Promise<void> {
      * if match is found, i.e., variables are part of this query we can slice it
      * and keep it seperate. otherwise its just an empty string
      */
+
     if (match) {
       slicedQuery = query.slice(0, match.index + match[0].length);
       // console.log("slicedQuery", slicedQuery, "\n\n");
@@ -63,7 +67,7 @@ export async function typeql(fileNameWithEnding: string): Promise<void> {
      * `{` character. This will also remove `[` since `[` always comes before a
      * `{`. Check query-basic.tql (line 4)
      */
-    query = query.replace(/:.*(?<!{)/gm, " ");
+    query = query.replace(/:.*(?<!{|})/gm, " ");
     /**
      * remove the `]` character from the query
      */
@@ -164,8 +168,7 @@ async function generateVariableTyping(slicedQuery: string) {
     } else {
       /** type is not strict so add null
        */
-      resultVariablesTypeObject[variable] =
-        (definations[type] as string) + " | null";
+      resultVariablesTypeObject[variable] = definations[type] + " | null";
     }
   }
   const stringifiedVariableType =
@@ -180,4 +183,20 @@ async function generateVariableTyping(slicedQuery: string) {
   // );
   // console.log(stringifiedVariableType);
   return stringifiedVariableType;
+}
+
+async function generateResultTyping(query: string): Promise<string> {
+  const resultTypingArray = [];
+  const stk = [];
+  for (const ch of query) {
+    if (ch === "(") {
+      stk.push("(");
+    } else if (ch === ")") {
+      stk.pop();
+    } else if (stk.length === 0) {
+      resultTypingArray.push(ch);
+    }
+  }
+  console.log("result typings", resultTypingArray.join(""));
+  return "";
 }

@@ -1,7 +1,6 @@
 import { typeql } from "./converter";
 import { promises as fs } from "fs";
 import { settings, pickSettingsFromTypeqlConfig } from "./settings";
-import { inherits } from "node:util";
 
 // console.log("settings data from index", settings);
 
