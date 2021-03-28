@@ -23,15 +23,15 @@ that you are going to get from this query.
 
 ```graphql
 query HeroNameAndFriends(
-  $hero_id: String!
-  $some_other_id: Int
-  $another_string: String!
+ $hero_id: String!,
+ $some_other_id: Int,
+ $another_string: String!
 ) {
-  hero_by_id(id: $hero_id, some_id: $some_other_id, another: $another_string) {
-    name
-    friends {
-      name
-    }
+  hero_by_id(id: $hero_id, some_id: $some_other_id, another: $another_string): {
+    name: String!
+    friends: [{
+      name: String!
+    }]
   }
 }
 ```
