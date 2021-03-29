@@ -35,3 +35,21 @@ query HeroNameAndFriends(
   }
 }
 ```
+
+The above will return to
+
+```typescript
+export interface IResult {
+  hero_by_id: {
+    name: string;
+    friends: {
+      name: string | null;
+    }[];
+  };
+}
+export interface IVariables {
+  hero_id: string;
+  some_other_id: number | null;
+  another_string: string;
+}
+```
