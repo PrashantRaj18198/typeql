@@ -10,3 +10,9 @@ Easier way to provide typings for your graphql queries.
 - Put files inside tql folder with .tql extension
 - `npm run start`
 - Get .graphql files in root folder
+
+# Known Problems
+
+- Delete typings folder to remove typings/query...ts not under rootDir.
+- You have to use multiline queries to get the correct typings/graphql-query
+  from your typeql file.
