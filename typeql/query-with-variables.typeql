@@ -6,7 +6,7 @@ query HeroNameAndFriends(
   hero_by_id(id: $hero_id, some_id: $some_other_id, another: $another_string): {
     name: String!
     friends: [{
-      name: String!
+      name: String
     }]
   }
 }

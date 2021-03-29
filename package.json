@@ -2,9 +2,9 @@
   "name": "typeql",
   "version": "0.0.0",
   "description": "better way to add typings for graphql queries",
-  "main": "dist/src/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "tsc && node dist/src/index.js",
+    "start": "tsc && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

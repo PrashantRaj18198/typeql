@@ -30,10 +30,11 @@ export async function typeql(fileNameWithEnding: string): Promise<void> {
      * from this part.
      */
     let slicedQuery = "";
-    let variableTyping: string | undefined = undefined;
-    let resultTyping: string | undefined = undefined;
+    let variableTyping: string = "";
+    let resultTyping: string = "";
 
-    resultTyping = await generateResultTyping(query);
+    resultTyping = generateResultTyping(query);
+    console.log(resultTyping);
     /**
      * parantheses matcher. Matches everything till the last `)` character found
      * Since we only support one query per file this should be okay to do.
@@ -85,12 +86,8 @@ export async function typeql(fileNameWithEnding: string): Promise<void> {
     /**
      * write the typings for variables only if variables are present
      */
-    if (variableTyping) {
-      await fs.writeFile(
-        `${settings.typingsDir}/${fileName}.ts`,
-        variableTyping
-      );
-    }
+    const typings = `${resultTyping}\n${variableTyping}`;
+    await fs.writeFile(`${settings.typingsDir}/${fileName}.ts`, typings);
   } catch (error) {
     console.log(error);
   }
@@ -185,7 +182,7 @@ async function generateVariableTyping(slicedQuery: string) {
   return stringifiedVariableType;
 }
 
-async function generateResultTyping(query: string): Promise<string> {
+function generateResultTyping(query: string): string {
   const resultTypingArray = [];
   const stk = [];
   for (const ch of query) {
@@ -198,5 +195,47 @@ async function generateResultTyping(query: string): Promise<string> {
     }
   }
   console.log("result typings", resultTypingArray.join(""));
-  return "";
+  console.log(
+    "chars inside highest level brackets\n",
+    charactersInsideBrackets(resultTypingArray.join(""))
+  );
+  return iResultGenerator(charactersInsideBrackets(resultTypingArray.join("")));
+}
+
+/**
+ * get characters inside the first brackets
+ * @param query
+ */
+function charactersInsideBrackets(query: string) {
+  const result: string[] = [];
+  let bracketCount = 0;
+  const openingBrackets = ["{", "["];
+  const closingBrackets = ["}", "]"];
+  for (const ch of query) {
+    if (openingBrackets.includes(ch)) {
+      bracketCount++;
+      result.push(ch);
+    } else if (closingBrackets.includes(ch)) {
+      bracketCount--;
+      result.push(ch);
+    } else if (bracketCount > 0) {
+      result.push(ch);
+    }
+  }
+  // console.log(result);
+  return result.join("");
+}
+
+function iResultGenerator(str: string): string {
+  str = str.replace(/\[/g, "");
+  str = str.replace(/\]/g, "[]");
+  Object.keys(definations).forEach((type) => {
+    str = str.replace(new RegExp(`${type}\!`, "g"), definations[type]);
+    str = str.replace(
+      new RegExp(`${type}`, "g"),
+      definations[type] + ` | null`
+    );
+  });
+  str = "export interface IResult" + str;
+  return str;
 }
