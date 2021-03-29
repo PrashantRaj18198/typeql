@@ -40,7 +40,7 @@ query HeroNameAndFriends(
 }
 ```
 
-The above will return to
+The above will return the graphql query and typings as such
 
 ```typescript
 export interface IResult {
@@ -55,6 +55,21 @@ export interface IVariables {
   hero_id: string;
   some_other_id: number | null;
   another_string: string;
+}
+```
+
+```graphql
+query HeroNameAndFriends(
+  $hero_id: String!
+  $some_other_id: Int
+  $another_string: String!
+) {
+  hero_by_id(id: $hero_id, some_id: $some_other_id, another: $another_string) {
+    name
+    friends {
+      name
+    }
+  }
 }
 ```
 
