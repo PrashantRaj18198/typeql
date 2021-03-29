@@ -2,7 +2,7 @@
 
 Easier way to provide typings for your graphql queries.
 
-# Why use typeQL
+# Why use typeql
 
 Below is a sample graphql shema but you don't know what kind of data it returns
 is it an `object`, an `array of objects`, etc.
